@@ -1,14 +1,10 @@
-import sys
-import os
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'src')))
-
-from product import Product
-from category import Category
-
 import pytest
+from src.product import Product
+from src.category import Category
 
 @pytest.fixture(autouse=True)
 def reset_class_attributes():
+    # Сбросим счетчики перед каждым тестом, чтобы тесты были независимыми
     Category.category_count = 0
     Category.product_count = 0
 
@@ -48,6 +44,9 @@ def test_category_products_length_matches_product_count():
     cat1 = Category("Категория1", "Описание1", [p1, p2])
     cat2 = Category("Категория2", "Описание2", [p3])
 
+    # Общее число продуктов = 2 + 1 = 3
     assert Category.product_count == 3
+
+    # Проверяем, что длина products у каждого объекта корректна
     assert len(cat1.products) == 2
     assert len(cat2.products) == 1
