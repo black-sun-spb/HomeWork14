@@ -28,22 +28,20 @@ def test_products_getter_format():
     assert formatted == "Яблоко, 80 руб. Остаток: 15 шт."
 
 
-def test_product_price_validation_negative(capfd):
+def test_product_price_validation_negative_no_exception(capfd):
     product = Product("Тест", "Описание", 100, 1)
-    product.price = -10
-
+    product.price = -10  # не должно менять цену, не бросать ошибку
     out, _ = capfd.readouterr()
     assert "Цена не должна быть нулевая или отрицательная" in out
-    assert product.price == 100
+    assert product.price == 100  # Цена не изменилась
 
 
-def test_product_price_validation_zero(capfd):
+def test_product_price_validation_zero_no_exception(capfd):
     product = Product("Тест", "Описание", 100, 1)
     product.price = 0
-
     out, _ = capfd.readouterr()
     assert "Цена не должна быть нулевая или отрицательная" in out
-    assert product.price == 100
+    assert product.price == 100  # Цена не изменилась
 
 
 def test_price_decrease_confirmation(monkeypatch, capfd):
