@@ -28,22 +28,20 @@ def test_products_getter_format():
     assert formatted == "Яблоко, 80 руб. Остаток: 15 шт."
 
 
-def test_product_price_validation_negative(capfd):
+def test_product_price_validation_negative_no_exception(capfd):
     product = Product("Тест", "Описание", 100, 1)
-    product.price = -10
-
+    product.price = -10  # не должно менять цену, не бросать ошибку
     out, _ = capfd.readouterr()
     assert "Цена не должна быть нулевая или отрицательная" in out
-    assert product.price == 100
+    assert product.price == 100  # Цена не изменилась
 
 
-def test_product_price_validation_zero(capfd):
+def test_product_price_validation_zero_no_exception(capfd):
     product = Product("Тест", "Описание", 100, 1)
     product.price = 0
-
     out, _ = capfd.readouterr()
     assert "Цена не должна быть нулевая или отрицательная" in out
-    assert product.price == 100
+    assert product.price == 100  # Цена не изменилась
 
 
 def test_price_decrease_confirmation(monkeypatch, capfd):
@@ -97,3 +95,23 @@ def test_new_product_without_list():
     assert p.name == "Сок"
     assert p.quantity == 3
     assert p.price == 90
+
+
+def test_product_addition():
+    a = Product("Молоко", "1 л", 100, 10)
+    b = Product("Кефир", "1 л", 200, 2)
+    assert a + b == 100 * 10 + 200 * 2
+
+
+def test_category_iterator():
+    from src.category import Category
+    from src.product import Product
+
+    products = [
+        Product("Кола", "Газированный напиток", 50, 10),
+        Product("Спрайт", "Газированный напиток", 45, 8),
+    ]
+    cat = Category("Напитки", "Холодные", products)
+
+    names = [product.name for product in cat]
+    assert names == ["Кола", "Спрайт"]

@@ -1,4 +1,4 @@
-from typing import List
+from typing import Iterator, List
 
 from src.product import Product
 
@@ -10,10 +10,9 @@ class Category:
     def __init__(self, name: str, description: str, products: List[Product]) -> None:
         self.name = name
         self.description = description
-        self.__products: List[Product] = []  # приватный список
+        self.__products: List[Product] = []
         for product in products:
-            self.add_product(product)  # учёт добавления через метод
-
+            self.add_product(product)
         Category.category_count += 1
 
     def add_product(self, product: Product) -> None:
@@ -23,8 +22,27 @@ class Category:
 
     @property
     def products(self) -> str:
-        """Вернуть список продуктов в виде форматированных строк, каждый с новой строки"""
-        return "".join(
-            f"{p.name}, {p.price} руб. Остаток: {p.quantity} шт.\n"
-            for p in self.__products
-        )
+        return "\n".join(str(prod) for prod in self.__products)
+
+    def __str__(self) -> str:
+        total_quantity = sum(product.quantity for product in self.__products)
+        return f"{self.name}, количество продуктов: {total_quantity} шт."
+
+    def __iter__(self) -> Iterator[Product]:
+        return CategoryIterator(self)
+
+
+class CategoryIterator:
+    def __init__(self, category: Category) -> None:
+        self._products = category._Category__products  # type: ignore[attr-defined]
+        self._index = 0
+
+    def __iter__(self) -> "CategoryIterator":
+        return self
+
+    def __next__(self) -> Product:
+        if self._index >= len(self._products):
+            raise StopIteration
+        product = self._products[self._index]
+        self._index += 1
+        return product
