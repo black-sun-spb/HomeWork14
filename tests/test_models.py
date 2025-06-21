@@ -95,3 +95,23 @@ def test_new_product_without_list():
     assert p.name == "Сок"
     assert p.quantity == 3
     assert p.price == 90
+
+
+def test_product_addition():
+    a = Product("Молоко", "1 л", 100, 10)
+    b = Product("Кефир", "1 л", 200, 2)
+    assert a + b == 100 * 10 + 200 * 2
+
+
+def test_category_iterator():
+    from src.category import Category
+    from src.product import Product
+
+    products = [
+        Product("Кола", "Газированный напиток", 50, 10),
+        Product("Спрайт", "Газированный напиток", 45, 8),
+    ]
+    cat = Category("Напитки", "Холодные", products)
+
+    names = [product.name for product in cat]
+    assert names == ["Кола", "Спрайт"]

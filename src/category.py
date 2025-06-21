@@ -23,7 +23,8 @@ class Category:
 
     @property
     def products(self) -> str:
-        return '\n'.join(
-            f"{prod.name}, {prod.price} руб. Остаток: {prod.quantity} шт."
-            for prod in self.__products
+        """Вернуть список продуктов в виде форматированных строк, каждый с новой строки"""
+        return "".join(
+            f"{p.name}, {p.price} руб. Остаток: {p.quantity} шт.\n"
+            for p in self.__products
         )
