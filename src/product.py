@@ -1,45 +1,52 @@
-# flake8 .\srcproduct.py
-
+from dataclasses import dataclass
 from typing import Dict, List, Optional
 
 
+@dataclass
 class Product:
+    name: str
+    description: str
+    quantity: int
+    _price: float = 0.0  # Приватный атрибут
+
     def __init__(
         self, name: str, description: str, price: float, quantity: int
     ) -> None:
         self.name = name
         self.description = description
         self.quantity = quantity
-        self.__price = 0.0  # приватный атрибут
-        self.price = price  # вызов сеттера
+        self._price = 0.0
+        self.price = price  # Использует сеттер
 
     @property
     def price(self) -> float:
-        return self.__price
+        return self._price
 
     @price.setter
     def price(self, value: float) -> None:
         if value <= 0:
             print("Цена не должна быть нулевая или отрицательная")
-            return  # Не меняем цену и не бросаем исключение
+            return
 
-        if value < self.__price:
+        if value < self._price:
             try:
                 confirm = (
                     input(
-                        f"Цена товара понижается с {self.__price} до {value}. Подтвердить? (y/n): "
+                        f"Цена товара понижается с {self._price} до {value}. Подтвердить? (y/n): "
                     )
                     .strip()
                     .lower()
                 )
             except EOFError:
-                confirm = "n"
+                confirm = (
+                    "n"  # На случай если input вызван в тестах или не интерактивно
+                )
             if confirm != "y":
                 print("Изменение отменено.")
                 return
 
-        self.__price = value
-        print(f"Цена успешно изменена на {self.__price}")
+        self._price = value
+        print(f"Цена успешно изменена на {self._price}")
 
     @classmethod
     def new_product(
@@ -72,8 +79,3 @@ class Product:
 
     def __str__(self) -> str:
         return f"{self.name}, {self.price} руб. Остаток: {self.quantity} шт."
-
-    def __add__(self, other: "Product") -> float:
-        if not isinstance(other, Product):
-            return NotImplemented
-        return self.price * self.quantity + other.price * other.quantity
