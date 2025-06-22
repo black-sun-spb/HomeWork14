@@ -53,3 +53,33 @@ def test_product_addition_different_classes():
     b = LawnGrass("Трава", "desc", 200, 2, "Россия", "5 дней", "зелёный")
     with pytest.raises(TypeError, match="Складывать можно только товары одного типа"):
         _ = a + b
+
+
+def test_new_product_without_list():
+    p = Product.new_product(
+        {"name": "Молоко", "description": "1 л", "price": 80, "quantity": 3}
+    )
+    assert isinstance(p, Product)
+    assert p.name == "Молоко"
+    assert p.price == 80
+    assert p.quantity == 3
+
+
+def test_new_product_add_to_list():
+    products = []
+    p = Product.new_product(
+        {"name": "Молоко", "description": "1 л", "price": 80, "quantity": 3}, products
+    )
+    assert len(products) == 1
+    assert products[0] is p
+
+
+def test_new_product_merge_duplicate():
+    existing = [Product("Молоко", "1 л", 70, 5)]
+    p = Product.new_product(
+        {"name": "Молоко", "description": "1 л", "price": 90, "quantity": 2}, existing
+    )
+    assert len(existing) == 1
+    assert existing[0].quantity == 7
+    assert existing[0].price == 90
+    assert p is existing[0]

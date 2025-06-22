@@ -53,3 +53,29 @@ def test_add_only_product_subclasses():
         match="Можно добавлять только объекты класса Product или его наследников",
     ):
         cat.add_product("не продукт")
+
+
+def test_category_iterator():
+    prod1 = Product("Морковь", "Сочная", 50, 10)
+    prod2 = Product("Капуста", "Белокочанная", 40, 5)
+    cat = Category("Овощи", "Свежие овощи", [prod1, prod2])
+
+    names = [p.name for p in cat]
+    assert names == ["Морковь", "Капуста"]
+
+
+def test_category_and_product_counters():
+    assert Category.category_count == 0
+    assert Category.product_count == 0
+
+    cat = Category("Овощи", "Описание", [])
+    assert Category.category_count == 1
+
+    cat.add_product(Product("Лук", "Репчатый", 30, 8))
+    assert Category.product_count == 1
+
+
+def test_empty_category_str():
+    cat = Category("Пустая", "Без товаров", [])
+    assert str(cat) == "Пустая, количество продуктов: 0 шт."
+    assert cat.products == ""
