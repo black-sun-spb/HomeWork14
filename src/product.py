@@ -1,9 +1,12 @@
-# flake8 .\srcproduct.py
+# src/product.py
 
 from typing import Dict, List, Optional
 
+from src.base_product import BaseProduct
+from src.mixin import CreationLoggerMixin
 
-class Product:
+
+class Product(CreationLoggerMixin, BaseProduct):
     def __init__(
         self, name: str, description: str, price: float, quantity: int
     ) -> None:
@@ -12,6 +15,7 @@ class Product:
         self.quantity = quantity
         self.__price = 0.0  # приватный атрибут
         self.price = price  # вызов сеттера
+        super().__init__(name, description, price, quantity)  # Для корректного MRO
 
     @property
     def price(self) -> float:
