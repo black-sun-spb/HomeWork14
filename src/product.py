@@ -3,6 +3,7 @@
 from typing import Dict, List, Optional
 
 from src.base_product import BaseProduct
+from src.exceptions import ZeroQuantityError
 from src.mixin import CreationLoggerMixin
 
 
@@ -10,6 +11,10 @@ class Product(CreationLoggerMixin, BaseProduct):
     def __init__(
         self, name: str, description: str, price: float, quantity: int
     ) -> None:
+        if quantity == 0:
+            raise ZeroQuantityError(
+                "Товар с нулевым количеством не может быть добавлен"
+            )
         self.name = name
         self.description = description
         self.quantity = quantity

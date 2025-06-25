@@ -1,5 +1,6 @@
 import pytest
 
+from src.exceptions import ZeroQuantityError
 from src.lawngrass import LawnGrass
 from src.product import Product
 from src.smartphone import Smartphone
@@ -83,3 +84,10 @@ def test_new_product_merge_duplicate():
     assert existing[0].quantity == 7
     assert existing[0].price == 90
     assert p is existing[0]
+
+
+def test_product_zero_quantity_raises():
+    with pytest.raises(
+        ZeroQuantityError, match="Товар с нулевым количеством не может быть добавлен"
+    ):
+        Product("Тестовый", "desc", 100, 0)

@@ -1,6 +1,7 @@
 from typing import Iterator, List
 
 from src.base_entity import BaseEntity
+from src.exceptions import ZeroQuantityError
 from src.product import Product
 
 
@@ -18,13 +19,25 @@ class Category(BaseEntity):
 
     def add_product(self, product: Product) -> None:
         """Добавить продукт в категорию и увеличить счётчик продуктов"""
-        if not isinstance(product, Product):
-            raise TypeError(
-                "Можно добавлять только объекты класса Product или его наследников"
-            )
+        try:
+            if not isinstance(product, Product):
+                raise TypeError(
+                    "Можно добавлять только объекты класса Product или его наследников"
+                )
+            if product.quantity == 0:
+                raise ZeroQuantityError(
+                    "Товар с нулевым количеством не может быть добавлен"
+                )
 
-        self.__products.append(product)
-        Category.product_count += 1
+            self.__products.append(product)
+            Category.product_count += 1
+        except (TypeError, ZeroQuantityError) as e:
+            print(f"Ошибка: {e}")
+            raise  # повторно выбрасываем, чтобы тесты ловили исключение
+        else:
+            print(f"Товар '{product.name}' успешно добавлен.")
+        finally:
+            print("Обработка добавления товара завершена.")
 
     @property
     def products(self) -> str:
@@ -33,6 +46,15 @@ class Category(BaseEntity):
     def __str__(self) -> str:
         total_quantity = sum(product.quantity for product in self.__products)
         return f"{self.name}, количество продуктов: {total_quantity} шт."
+
+    def average_price(self) -> float:
+        """Возвращает среднюю цену всех товаров в категории."""
+        try:
+            total = sum(product.price for product in self.__products)
+            count = len(self.__products)
+            return total / count
+        except ZeroDivisionError:
+            return 0.0
 
     def __iter__(self) -> Iterator[Product]:
         return CategoryIterator(self)
