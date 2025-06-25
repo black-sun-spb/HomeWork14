@@ -79,3 +79,15 @@ def test_empty_category_str():
     cat = Category("Пустая", "Без товаров", [])
     assert str(cat) == "Пустая, количество продуктов: 0 шт."
     assert cat.products == ""
+
+
+def test_average_price_correct():
+    cat = Category("Техника", "Электроника", [])
+    cat.add_product(Product("Тостер", "Описание", 1000, 2))
+    cat.add_product(Product("Чайник", "Описание", 500, 1))
+    assert cat.average_price() == 750.0  # (1000 + 500) / 2
+
+
+def test_average_price_empty_category():
+    cat = Category("Пустая", "Нет товаров", [])
+    assert cat.average_price() == 0.0
